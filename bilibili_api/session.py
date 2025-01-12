@@ -23,6 +23,7 @@ from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.network import Api
+import random 
 
 API = get_api("session")
 
@@ -75,7 +76,10 @@ async def new_sessions(
     credential.raise_for_no_sessdata()
     params = {"begin_ts": begin_ts, "build": 0, "mobi_app": "web"}
     api = API["session"]["new"]
-
+    random.seed(time.time())
+    sleep_time = random.randint(0, 10)
+    await asyncio.sleep(sleep_time)
+    
     return await Api(**api, credential=credential).update_params(**params).result
 
 
@@ -494,7 +498,7 @@ class Session(AsyncEvent):
         @self.sched.scheduled_job(
             "interval",
             id="query",
-            seconds=6,
+            seconds=30,
             max_instances=3,
             next_run_time=datetime.datetime.now(),
         )
